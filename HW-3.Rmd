@@ -25,11 +25,10 @@ library(forcats)
 Please indicate
 
 * Who you collaborated with: Alden Cowap
-* Roughly how much time you spent on this HW so far: 1
-* The URL of the RPubs published URL [here](https://www.nhl.com/).
-* What gave you the most trouble: I am not an econ major, so a lot of the regression stuff is a little foreign to me. However, I think I got understand it a little more after this homework. 
-* Any comments you have: 
-
+* Roughly how much time you spent on this HW so far: 5 hours
+* The URL of the RPubs published URL [http://rpubs.com/egoins/hw3] (https://www.nhl.com/).
+* What gave you the most trouble: I am not an econ major, so a lot of the regression stuff is a little foreign to me. However, I think I got understand it a little more after this homework. I also had a little difficulty with advising the global currency exhanger. 
+* Any comments you have: I am not sure if I have appropriately applied the model to the training data!
 
 
 ## Question 1:
@@ -155,7 +154,7 @@ correctTest
 Did the model perform better on the `training` data or the `test` data? Why
 do you think that is?
 
-The model performed slightly better on the "training" data (63.88%) than on the "test" data (54.97%). This is most likely because the model was originally traininged on the "training" data, and therefore it should produce more accurate statistics when it is run on that data set.
+ANSWER : The model performed slightly better on the "training" data (63.88%) than on the "test" data (54.97%). This is most likely because the model was originally traininged on the "training" data, and therefore it should produce more accurate statistics when it is run on that data set.
 
 
 ## Question 2:
@@ -169,7 +168,8 @@ Let our measure of volatility be the relative change from day-to-day in price.
 Let the reference currency be US dollars. Analyze these results and provide
 insight to a foreign currency exchanger.
 
-** *ANSWER** : In order to make this comparison, I took a subset of the graph for the gold data to match the dates of the bitcoin data. It is easy to see that gold is more volatile than bitcoin on a day-to-day basis, so 
+ANSWER : In order to make this comparison, I took a subset of the graph for the gold data to match the dates of the bitcoin data. It is easy to see that gold is more volatile than bitcoin on a day-to-day basis. I would advise the exchanger to use bitcoin instead of gold for trading because you can better predict its future value. 
+As advised here on volatility: http://internationalecon.com/Finance/Fch110/F110-1.phpc
 
 ```{r, echo=TRUE, message=TRUE, warning=TRUE, fig.width=8, fig.height=4.5}
 bitcoin <- Quandl("BAVERAGE/USD") %>%
