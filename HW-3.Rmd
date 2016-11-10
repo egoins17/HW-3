@@ -258,11 +258,12 @@ the "graveyard shift" during the academic year? Define
 * the academic year as September through May (inclusive)
 
 ```{r, echo=TRUE, message=TRUE, warning=TRUE, fig.width=8, fig.height=4.5}
+#time zone --> peak was at 5 am
 graveyard <- jukebox %>%
   mutate(date = parse_date_time(date_time, "a b d HMS Y")) %>%
   mutate(month = month(date)) %>%  
   mutate(hour = hour(date)) %>%
-  filter(month != 6 & month != 7 & month != 8 & hour >= 0 & hour <= 8) %>% 
+  filter(month != 6 & month != 7 & month != 8 & hour >= 0 & hour <= 8) %>% #don't include 8 because any time after 8 will be counted
   group_by(artist) %>%
   tally() %>%
   arrange(desc(n)) %>%
