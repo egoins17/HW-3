@@ -25,10 +25,10 @@ library(forcats)
 Please indicate
 
 * Who you collaborated with: Alden Cowap
-* Roughly how much time you spent on this HW so far: 8 hours
+* Roughly how much time you spent on this HW so far: 9 hours
 * The URL of the RPubs published URL [http://rpubs.com/egoins/hw3] (https://www.nhl.com/).
 * What gave you the most trouble: I am not an econ major, so a lot of the regression stuff is a little foreign to me. However, I think I got understand it a little more after this homework. I also had a little difficulty with advising the global currency exhanger. 
-* Any comments you have: I am not sure if I have appropriately applied the model to the training data!
+* Any comments you have: I could not figure out what was wrong with the graveyard data set!!
 
 
 ## Question 1:
@@ -104,8 +104,7 @@ profilesEDA <- profiles %>%
 training <- profilesEDA %>%
   sample_n(2997) 
 
-test <- profilesEDA %>%
-  filter(!(id %in% training$id))
+test <- anti_join(profilesEDA, training, by = "id") 
 
 
 
@@ -190,35 +189,33 @@ As advised here on volatility: http://internationalecon.com/Finance/Fch110/F110-
 
 ```{r, echo=TRUE, message=TRUE, warning=TRUE, fig.width=8, fig.height=4.5}
 bitcoin <- Quandl("BAVERAGE/USD") %>%
-  tbl_df() 
+  tbl_df() %>%
+  mutate(Currency = "Bitcoin") %>%
+  arrange(Date) %>%
+  rename("Value" = `24h Average`) %>%
+  select(Date, Value, Currency)
 
 gold <- Quandl("BUNDESBANK/BBK01_WT5511")%>%
-  tbl_df() 
+  tbl_df() %>%
+  mutate(Currency = "Gold") %>%
+  arrange(Date) 
 
-volBitcoin <- bitcoin %>% 
-  rename(
-    Avg = `24h Average`, 
-    Total_Volume = `Total Volume`
-    ) %>%
-  mutate(avg_lag = lag(Avg)) %>%
-  mutate(diff = Avg-avg_lag) %>%
-  mutate(Volatility = diff/Avg) %>%
-  mutate(Currency = "Bitcoin") %>%
-  select(Date, Volatility, Currency) %>%
-  filter(!is.na(Volatility))
 
-dates <- interval(ymd("2010-07-17"), ymd("2016-10-25"))
-volGold <- gold %>% 
+#group_by() would have gotten rid of the bitcoin/gold continuation problem
+connect <- bind_rows(bitcoin, gold)
+dates <- interval(ymd("2010-07-17"), ymd("2016-04-18"))
+volConnect <- connect %>% 
   filter(Date %within% dates) %>%
   mutate(value_lag = lag(Value)) %>%
-  mutate(diff = Value-value_lag) %>%
-  mutate(Volatility = diff/Value) %>%
-  mutate(Currency = "Gold") %>%
-  select(Date, Volatility, Currency) %>%
-  filter(!is.na(Volatility))
+  mutate(diff = lag(Value-value_lag)) %>%
+  mutate(diff = lead(diff)) %>%
+  mutate(Volatility = diff/value_lag * 100) %>%
+  filter(!is.na(Volatility)) %>%
+  filter(Date != "2010-07-19" | Currency != "Gold") %>%
+  select(Date, Volatility, Currency)
 
-volatility <- rbind(volGold, volBitcoin) 
-ggplot(data = volatility, aes(x = Date, y = Volatility, color = Currency)) + geom_line()   + ggtitle("Volatility of Gold and Bitcoin 2010-2016")
+
+ggplot(data = volConnect, aes(x = Date, y = Volatility, color = Currency)) + geom_line()   + ggtitle("Volatility of Gold and Bitcoin 2010-2016")
 
 
 
